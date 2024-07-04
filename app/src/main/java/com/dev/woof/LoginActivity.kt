@@ -41,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
+            .requestIdToken(getString(R.string.google_web_client_id))
             .build()
         gsc = GoogleSignIn.getClient(this, gso)
 
