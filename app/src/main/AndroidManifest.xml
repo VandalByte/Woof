@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Woof">
-        <receiver android:name=".ReminderReceiver" />
+        <receiver android:name=".reminder.ReminderReceiver" />
         <activity
             android:name=".welcomescreen.WelcomeActivity3"
             android:exported="false" />

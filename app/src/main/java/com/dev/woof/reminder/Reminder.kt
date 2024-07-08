@@ -1,4 +1,4 @@
-package com.dev.woof
+package com.dev.woof.reminder
 
 data class Reminder(
     val cause: String,
