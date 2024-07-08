@@ -12,18 +12,34 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.dev.woof.reminder.Reminder
 import com.dev.woof.reminder.ReminderAdapter
+import com.dev.woof.reminder.ReminderDatabase
 import com.dev.woof.reminder.ReminderReceiver
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.*
 
-class NotificationFragment: Fragment(R.layout.fragment_notification) {
+class NotificationFragment : Fragment(R.layout.fragment_notification) {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ReminderAdapter
     private val reminders = mutableListOf<Reminder>()
+
+    // Room Database
+    private lateinit var reminderDatabase: ReminderDatabase
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Initialize Room Database
+        reminderDatabase = Room.databaseBuilder(
+            requireContext(),
+            ReminderDatabase::class.java, "reminder-db"
+        ).build()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,18 +75,29 @@ class NotificationFragment: Fragment(R.layout.fragment_notification) {
                     set(Calendar.MINUTE, time.split(":")[1].toInt())
                     set(Calendar.SECOND, 0)
                 }
-                addReminder(cause, calendar.timeInMillis)
+                addReminderToDatabase(cause, calendar.timeInMillis)
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun addReminder(cause: String, time: Long) {
+    private fun addReminderToDatabase(cause: String, time: Long) {
         val reminder = Reminder(cause, time)
         reminders.add(reminder)
         adapter.notifyItemInserted(reminders.size - 1)
 
+        // Insert into Room Database
+        insertReminderIntoDatabase(reminder)
+
         scheduleNotification(reminder)
+    }
+
+    private fun insertReminderIntoDatabase(reminder: Reminder) {
+        // Use a coroutine to perform database operation asynchronously
+        // Since Room operations are suspend functions
+        lifecycleScope.launch {
+            reminderDatabase.dao.upsertReminder(reminder)
+        }
     }
 
     private fun scheduleNotification(reminder: Reminder) {
@@ -79,10 +106,11 @@ class NotificationFragment: Fragment(R.layout.fragment_notification) {
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
-            context, reminder.time.toInt(), intent, PendingIntent.FLAG_IMMUTABLE
+            context, reminder.id, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.time, pendingIntent)
     }
 }
+
