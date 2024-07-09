@@ -89,47 +89,6 @@
 
             </com.google.android.material.textfield.TextInputLayout >
 
-            <!--<LinearLayout
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                android:layout_marginTop = "16dp"
-                android:layout_marginBottom = "16dp"
-                android:gravity = "center_vertical"
-                android:orientation = "horizontal" >
-
-                <TextView
-
-                    android:layout_width = "0dp"
-                    android:layout_height = "wrap_content"
-                    android:layout_marginEnd = "16dp"
-                    android:layout_weight = "1"
-                    android:text = "My Pets"
-                    android:textColor = "@color/black" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id = "@+id/add_pet"
-                    android:layout_width = "wrap_content"
-                    android:layout_height = "wrap_content"
-                    app:elevation = "1dp"
-                    app:fabCustomSize = "36dp"
-                    android:rotation = "45"
-                    />
-
-            </LinearLayout >-->
-
-            <!--<androidx.recyclerview.widget.RecyclerView
-                android:id = "@+id/pets_recycler"
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                tools:itemCount = "1"
-                app:layoutManager = "androidx.recyclerview.widget.LinearLayoutManager"
-                 />
-
-            <include
-                android:id = "@+id/no_data"
-
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content" />-->
 
         </LinearLayout >
 
