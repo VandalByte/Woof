@@ -1,3 +1,4 @@
+/*
 package com.dev.woof
 
 import android.content.Context
@@ -13,6 +14,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private lateinit var emailEditText: EditText
     private lateinit var profileImageView: ImageView
 
+    // Listener interface for profile photo changes
+    interface OnProfilePhotoChangedListener {
+        fun onProfilePhotoChanged(photoUrl: String?)
+    }
+
+    private var profilePhotoChangedListener: OnProfilePhotoChangedListener? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -25,6 +33,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         loadUserData()
         // Load profile image from SharedPreferences
         loadProfileImage()
+    }
+    // Method to set the profile photo changed listener
+    fun setOnProfilePhotoChangedListener(listener: OnProfilePhotoChangedListener) {
+        profilePhotoChangedListener = listener
     }
 
     private fun loadUserData() {
@@ -40,12 +52,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val sharedPref = requireActivity().getSharedPreferences("user_data", Context.MODE_PRIVATE)
         val profilePhotoUrl = sharedPref.getString("profile_photo_url", "")
 
-        // Load profile image using Glide (or Picasso)
+        // Load profile image using Glide
         Glide.with(requireContext())
             .load(profilePhotoUrl)
             .placeholder(R.drawable.img)
             .error(R.drawable.img)
             .circleCrop()
             .into(profileImageView)
+        // Notify listener about profile photo change
+        profilePhotoChangedListener?.onProfilePhotoChanged(profilePhotoUrl)
     }
 }
