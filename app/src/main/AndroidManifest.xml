@@ -12,9 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Woof">
         <activity
-            android:name=".settings1"
-            android:exported="false" />
-        <activity
             android:name=".welcomescreen.WelcomeActivity3"
             android:exported="false" />
         <activity
