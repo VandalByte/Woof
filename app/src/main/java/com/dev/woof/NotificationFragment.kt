@@ -63,26 +63,66 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
     }
 
     private fun showAddReminderDialog() {
+        // Inflate your custom layout for the dialog
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_reminder, null)
-        val causeEditText = dialogView.findViewById<EditText>(R.id.causeEditText)
-        val timeEditText = dialogView.findViewById<EditText>(R.id.timeEditText)
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Add Reminder")
-            .setView(dialogView)
+        // Find views within the custom layout
+        val causeEditText = dialogView.findViewById<EditText>(R.id.causeEditText)
+        val hourEditText = dialogView.findViewById<EditText>(R.id.hourEditText)
+        val minuteEditText = dialogView.findViewById<EditText>(R.id.minuteEditText)
+        val amPmEditText = dialogView.findViewById<EditText>(R.id.amPmEditText)
+
+        // Create a MaterialAlertDialogBuilder instance
+        val builder = MaterialAlertDialogBuilder(requireContext())
+
+        // Set up AM/PM dropdown menu
+        val amPmOptions = arrayOf("AM", "PM")
+        amPmEditText.setOnClickListener {
+            showAmPmDialog(amPmOptions, amPmEditText)
+        }
+
+        // Customize the dialog appearance and behavior
+        builder.setView(dialogView)  // Set custom view
+            .setTitle("Add Reminder")  // Set dialog title
             .setPositiveButton("Add") { _, _ ->
+                // Handle positive button click (Add button)
                 val cause = causeEditText.text.toString()
-                val time = timeEditText.text.toString()
+                var hour = hourEditText.text.toString().toIntOrNull() ?: 0
+                val minute = minuteEditText.text.toString().toIntOrNull() ?: 0
+                val amPm = amPmEditText.text.toString()
+
+                // TODO: Validate input if needed
+
+                // Convert hour and minute to 24-hour format
                 val calendar = Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, time.split(":")[0].toInt())
-                    set(Calendar.MINUTE, time.split(":")[1].toInt())
+                    if (amPm.equals("PM", ignoreCase = true) && hour < 12) {
+                        hour += 12
+                    } else if (amPm.equals("AM", ignoreCase = true) && hour == 12) {
+                        hour = 0
+                    }
+                    set(Calendar.HOUR_OF_DAY, hour)
+                    set(Calendar.MINUTE, minute)
                     set(Calendar.SECOND, 0)
                 }
+
+                // Add reminder to database
                 addReminderToDatabase(cause, calendar.timeInMillis)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Cancel", null)  // Set cancel button
+
+        // Show the dialog
+        builder.show()
+    }
+
+    private fun showAmPmDialog(options: Array<String>, amPmEditText: EditText) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Select AM/PM")
+            .setItems(options) { _, which ->
+                amPmEditText.setText(options[which])
+            }
             .show()
     }
+
 
     private fun observeReminders() {
         lifecycleScope.launch {

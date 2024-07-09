@@ -5,15 +5,76 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/causeEditText"
+    <!-- Cause EditText -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/causeInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Cause" />
+        android:hint="Cause">
 
-    <EditText
-        android:id="@+id/timeEditText"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/causeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Time inputs -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Time (HH:mm)" />
+        android:orientation="horizontal">
+
+        <!-- Hour EditText -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/hourInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Hour">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/hourEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Minute EditText -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/minuteInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Minute">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/minuteEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <!-- AM/PM dropdown menu -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/amPmInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="AM/PM">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/amPmEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:maxLines="1"
+            android:focusable="false" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 </LinearLayout>
