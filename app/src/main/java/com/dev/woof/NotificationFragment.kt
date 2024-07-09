@@ -51,6 +51,9 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
         adapter = ReminderAdapter(reminders)
         recyclerView.adapter = adapter
 
+        // Observe reminders from Room database
+        observeReminders()
+
         val fabAddReminder: FloatingActionButton = view.findViewById(R.id.fabAddReminder)
         fabAddReminder.setOnClickListener {
             showAddReminderDialog()
@@ -81,22 +84,26 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
             .show()
     }
 
-    private fun addReminderToDatabase(cause: String, time: Long) {
-        val reminder = Reminder(cause, time)
-        reminders.add(reminder)
-        adapter.notifyItemInserted(reminders.size - 1)
-
-        // Insert into Room Database
-        insertReminderIntoDatabase(reminder)
-
-        scheduleNotification(reminder)
+    private fun observeReminders() {
+        lifecycleScope.launch {
+            reminderDatabase.dao.getReminders().collect { remindersList ->
+                reminders.clear()
+                reminders.addAll(remindersList)
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 
-    private fun insertReminderIntoDatabase(reminder: Reminder) {
-        // Use a coroutine to perform database operation asynchronously
-        // Since Room operations are suspend functions
+    private fun addReminderToDatabase(cause: String, time: Long) {
+        val reminder = Reminder(cause, time)
+
         lifecycleScope.launch {
+            // Insert into Room Database
             reminderDatabase.dao.upsertReminder(reminder)
+
+            // No need to manually update RecyclerView here because it's handled by observeReminders()
+            // Schedule notification
+            scheduleNotification(reminder)
         }
     }
 
