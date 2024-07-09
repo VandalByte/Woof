@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -32,8 +31,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Check for exact alarm permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // Check and request exact alarm permission if needed
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM) != PackageManager.PERMISSION_GRANTED) {
                 requestExactAlarmPermissionLauncher.launch(Manifest.permission.SCHEDULE_EXACT_ALARM)
             }
@@ -41,22 +40,24 @@ class MainActivity : AppCompatActivity() {
 
         // Create Notification Channel
         createNotificationChannel()
-        // Initialize the label TextView
+
+        // Initialize views and fragments
         val fragmentNameTextView: TextView = findViewById(R.id.fragmentNameTextView)
         val profileImageView: ImageView = findViewById(R.id.profileImageView)
-        // loading all the fragments
+
         val homeFragment = HomeFragment()
         val petsFragment = PetsFragment()
         val notificationFragment = NotificationFragment()
         val settingsFragment = SettingsFragment()
 
-        // initial fragment
+        // Set initial fragment
         setCurrentFragment(homeFragment)
         fragmentNameTextView.text = getString(R.string.menu_home)
-        // getting the menu
+
+        // Setup Bottom Navigation View
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
+        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.menuHome -> {
                     setCurrentFragment(homeFragment)
                     fragmentNameTextView.text = getString(R.string.menu_home)
@@ -76,29 +77,32 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
         // Handle click on profileImageView to navigate to SettingsFragment
         profileImageView.setOnClickListener {
             setCurrentFragment(settingsFragment)
             fragmentNameTextView.text = getString(R.string.menu_settings)
             // Optionally, you can handle other UI changes or actions here
         }
+
+        // Set listener for profile photo change in SettingsFragment
         settingsFragment.setOnProfilePhotoChangedListener(object : SettingsFragment.OnProfilePhotoChangedListener {
             override fun onProfilePhotoChanged(photoUrl: String?) {
                 Glide.with(this@MainActivity)
                     .load(photoUrl)
-                    .placeholder(R.drawable.img)
-                    .error(R.drawable.img)
-                    .circleCrop()
-                    .into(profileImageView)
+                    .placeholder(R.drawable.img)  // Placeholder image resource
+                    .error(R.drawable.img)  // Error image resource
+                    .circleCrop()  // Crop the image into a circle
+                    .into(profileImageView)  // Load image into profileImageView
             }
         })
     }
 
-    private fun setCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flFragment, fragment)
-            commit()
-        }
+    private fun setCurrentFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.flFragment, fragment)
+            .commit()
+    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -112,5 +116,4 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
 }
