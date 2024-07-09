@@ -55,4 +55,6 @@ dependencies {
     // room db
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
+    // glide
+    implementation("com.github.bumptech.glide:glide:4.12.0")
 }
