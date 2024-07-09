@@ -48,9 +48,16 @@ class PetsFragment : Fragment(R.layout.fragment_pets) {
 
         storeDataInArrays()
 
-        petAdapter = PetAdapter(requireContext(), pet_id, pet_name, pet_breed, pet_age, pet_color, pet_gender)
+        petAdapter = PetAdapter(activity, requireContext(), pet_id, pet_name, pet_gender, pet_age, pet_breed, pet_color)
         recyclerView.adapter = petAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            activity?.recreate()
+        }
     }
 
     private fun storeDataInArrays() {
@@ -62,11 +69,9 @@ class PetsFragment : Fragment(R.layout.fragment_pets) {
                 pet_id.add(cursor.getString(0))
                 pet_name.add(cursor.getString(1))
                 pet_gender.add(cursor.getString(2))
-                pet_age.add(cursor.getString(3))
-                pet_weight.add(cursor.getString(4))
-                pet_height.add(cursor.getString(5))
-                pet_breed.add(cursor.getString(6))
-                pet_color.add(cursor.getString(7))
+                pet_age.add(cursor.getString(3)+" yrs" )
+                pet_breed.add(cursor.getString(4))
+                pet_color.add(cursor.getString(5))
             }
         }
     }

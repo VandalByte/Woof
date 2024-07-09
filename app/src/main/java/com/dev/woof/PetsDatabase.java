@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 public class PetsDatabase extends SQLiteOpenHelper {
 
     private Context context;
+
     private static final String DATABASE_NAME = "MyPets.db";
     private static final int DATABASE_VERSION = 2;
 
@@ -22,12 +23,11 @@ public class PetsDatabase extends SQLiteOpenHelper {
     private static final String COLUMN_GENDER = "pet_gender";
     private static final String COLUMN_AGE = "pet_age";
 
-    private static final String COLUMN_WEIGHT = "pet_weight";
-    private static final String COLUMN_HEIGHT = "pet_height";
+
     private static final String COLUMN_BREED = "pet_breed";
     private static final String COLUMN_COLOR = "pet_color";
 
-    public PetsDatabase(@Nullable Context context) {
+    PetsDatabase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
@@ -39,8 +39,7 @@ public class PetsDatabase extends SQLiteOpenHelper {
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_GENDER + " TEXT, " +
                 COLUMN_AGE + " INTEGER, " +
-                COLUMN_WEIGHT + " INTEGER, " +
-                COLUMN_HEIGHT + " INTEGER, " +  // Add pet_height column
+
                 COLUMN_BREED + " TEXT, " +
                 COLUMN_COLOR + " TEXT)";
         db.execSQL(query);
@@ -53,15 +52,14 @@ public class PetsDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    void addPet(String name, String gender, int age, String breed, int weight, int height, String color) {
+    void addPet(String name, String gender, int age, String breed,  String color) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_GENDER, gender);
         cv.put(COLUMN_AGE, age);
 
-        cv.put(COLUMN_WEIGHT, weight);
-        cv.put(COLUMN_HEIGHT, height);
+
         cv.put(COLUMN_BREED, breed);
         cv.put(COLUMN_COLOR, color);
 
@@ -83,4 +81,22 @@ public class PetsDatabase extends SQLiteOpenHelper {
         }
         return cursor;
     }
+
+    void updateData(String row_id, String name, String gender, String age, String breed, String color) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        cv.put(COLUMN_GENDER, gender);
+        cv.put(COLUMN_AGE, age);
+        cv.put(COLUMN_BREED, breed);
+        cv.put(COLUMN_COLOR, color);
+
+        long result = db.update(TABLE_NAME, cv, COLUMN_ID + "=?", new String[]{row_id});
+        if (result == -1) {
+            Toast.makeText(context, "Failed To Update.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

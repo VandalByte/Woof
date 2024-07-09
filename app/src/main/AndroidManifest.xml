@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Woof">
         <activity
-            android:name=".AddPets"
-            android:label="Add Pet"
-            android:parentActivityName=".PetsFragment"
+            android:name=".PetUpdateActivity"
             android:exported="false" />
+        <activity
+            android:name=".AddPets"
+            android:exported="false"
+            android:label="Add Pet"
+            android:parentActivityName=".PetsFragment" />
         <activity
             android:name=".welcomescreen.WelcomeActivity3"
             android:exported="false" />
