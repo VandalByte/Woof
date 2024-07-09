@@ -48,7 +48,10 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
         val view = inflater.inflate(R.layout.fragment_notification, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = ReminderAdapter(reminders)
+        adapter = ReminderAdapter(reminders) { reminder ->
+            deleteReminder(reminder)
+        }
+
         recyclerView.adapter = adapter
 
         // Observe reminders from Room database
@@ -60,6 +63,12 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
         }
 
         return view
+    }
+
+    private fun deleteReminder(reminder: Reminder) {
+        lifecycleScope.launch {
+            reminderDatabase.dao.deleteReminder(reminder)
+        }
     }
 
     private fun showAddReminderDialog() {
@@ -81,7 +90,7 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
             showAmPmDialog(amPmOptions, amPmEditText)
         }
 
-        // Customize the dialog appearance and behavior
+        // Customizing the dialog appearance and behavior
         builder.setView(dialogView)  // Set custom view
             .setTitle("Add Reminder")  // Set dialog title
             .setPositiveButton("Add") { _, _ ->
