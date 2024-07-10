@@ -14,6 +14,15 @@
         android:theme="@style/Theme.Woof">
         <receiver android:name=".reminder.ReminderReceiver" />
         <activity
+            android:name=".PetUpdateActivity"
+
+            android:exported="false" />
+        <activity
+            android:name=".AddPets"
+            android:exported="false"
+            android:label="Add Pet"
+            android:parentActivityName=".PetsFragment" />
+        <activity
             android:name=".welcomescreen.WelcomeActivity3"
             android:exported="false" />
         <activity

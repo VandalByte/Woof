@@ -85,6 +85,7 @@ public class AddPets extends AppCompatActivity {
 
                 PetsDatabase myDB = new PetsDatabase(AddPets.this);
                 myDB.addPet(name, gender, Integer.parseInt(age), breed, color);
+                finish();
             }
         });
 
