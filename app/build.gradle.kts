@@ -16,6 +16,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -57,4 +58,5 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     // glide
     implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation ("androidx.annotation:annotation:1.3.0")
 }

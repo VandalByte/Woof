@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="splashBackgroundColor">#214566</color>
+    <color name="red">#F44336</color>
 
 
 </resources>
