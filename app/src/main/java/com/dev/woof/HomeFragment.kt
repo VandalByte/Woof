@@ -44,7 +44,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         sharedViewModel.petNames.observe(viewLifecycleOwner, { names ->
             val allNames = names.joinToString("\n\t ")
-            petNamesTextView.text = "Pet Names: $allNames"
+            petNamesTextView.text = "Pet Names:\n $allNames"
         })
 
         startButton.setOnClickListener {
