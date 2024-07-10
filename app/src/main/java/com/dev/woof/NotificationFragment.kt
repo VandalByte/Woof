@@ -4,11 +4,15 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -162,11 +166,36 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
-            context, reminder.id, intent, PendingIntent.FLAG_IMMUTABLE
+            context, reminder.id.toInt(), intent, PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.time, pendingIntent)
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.time, pendingIntent)
+                } else {
+                    // Handle the case where exact alarms are not allowed
+                    // For example, show a message to the user or request permission
+                    requestExactAlarmPermission()
+                }
+            } else {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.time, pendingIntent)
+            }
+        } catch (e: SecurityException) {
+            // Handle the exception
+            // For example, show a message to the user or log the error
+            Toast.makeText(context, "Permission denied for scheduling exact alarms.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun requestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                data = Uri.parse("package:${requireContext().packageName}")
+            }
+            startActivity(intent)
+        }
     }
 }
-

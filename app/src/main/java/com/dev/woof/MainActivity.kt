@@ -6,11 +6,14 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Check for exact alarm permission
+        // Check and request exact alarm permission if needed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM) != PackageManager.PERMISSION_GRANTED) {
                 requestExactAlarmPermissionLauncher.launch(Manifest.permission.SCHEDULE_EXACT_ALARM)
@@ -38,33 +41,68 @@ class MainActivity : AppCompatActivity() {
         // Create Notification Channel
         createNotificationChannel()
 
-        // loading all the fragments
+        // Initialize views and fragments
+        val fragmentNameTextView: TextView = findViewById(R.id.fragmentNameTextView)
+        val profileImageView: ImageView = findViewById(R.id.profileImageView)
+
         val homeFragment = HomeFragment()
         val petsFragment = PetsFragment()
         val notificationFragment = NotificationFragment()
         val settingsFragment = SettingsFragment()
 
-        // initial fragment
+        // Set initial fragment
         setCurrentFragment(homeFragment)
+        fragmentNameTextView.text = getString(R.string.menu_home)
 
-        // getting the menu
+        // Setup Bottom Navigation View
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menuHome -> setCurrentFragment(homeFragment)
-                R.id.menuPets -> setCurrentFragment(petsFragment)
-                R.id.menuNotifications -> setCurrentFragment(notificationFragment)
-                R.id.menuSettings -> setCurrentFragment(settingsFragment)
+        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menuHome -> {
+                    setCurrentFragment(homeFragment)
+                    fragmentNameTextView.text = getString(R.string.menu_home)
+                }
+                R.id.menuPets -> {
+                    setCurrentFragment(petsFragment)
+                    fragmentNameTextView.text = getString(R.string.menu_pets)
+                }
+                R.id.menuNotifications -> {
+                    setCurrentFragment(notificationFragment)
+                    fragmentNameTextView.text = getString(R.string.menu_notifications)
+                }
+                R.id.menuSettings -> {
+                    setCurrentFragment(settingsFragment)
+                    fragmentNameTextView.text = getString(R.string.menu_settings)
+                }
             }
             true
         }
+
+        // Handle click on profileImageView to navigate to SettingsFragment
+        profileImageView.setOnClickListener {
+            setCurrentFragment(settingsFragment)
+            fragmentNameTextView.text = getString(R.string.menu_settings)
+            // Optionally, you can handle other UI changes or actions here
+        }
+
+        // Set listener for profile photo change in SettingsFragment
+        settingsFragment.setOnProfilePhotoChangedListener(object : SettingsFragment.OnProfilePhotoChangedListener {
+            override fun onProfilePhotoChanged(photoUrl: String?) {
+                Glide.with(this@MainActivity)
+                    .load(photoUrl)
+                    .placeholder(R.drawable.img)  // Placeholder image resource
+                    .error(R.drawable.img)  // Error image resource
+                    .circleCrop()  // Crop the image into a circle
+                    .into(profileImageView)  // Load image into profileImageView
+            }
+        })
     }
 
-    private fun setCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flFragment, fragment)
-            commit()
-        }
+    private fun setCurrentFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.flFragment, fragment)
+            .commit()
+    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
