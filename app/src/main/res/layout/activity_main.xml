@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="Fragment Name"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textSize="26sp" />
 
         <View
             android:layout_width="0dp"
