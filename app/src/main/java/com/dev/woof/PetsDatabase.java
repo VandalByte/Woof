@@ -108,4 +108,15 @@ public class PetsDatabase extends SQLiteOpenHelper {
             Toast.makeText(context,"Successfully Deleted.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    int getPetsCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
 }
