@@ -59,4 +59,6 @@ dependencies {
     // glide
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation ("androidx.annotation:annotation:1.3.0")
+    //viewmodel
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
 }
