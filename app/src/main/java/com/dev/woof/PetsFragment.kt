@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -25,6 +26,8 @@ class PetsFragment : Fragment(R.layout.fragment_pets) {
     private lateinit var pet_color: ArrayList<String>
 
     private lateinit var petAdapter: PetAdapter
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,13 +54,9 @@ class PetsFragment : Fragment(R.layout.fragment_pets) {
         petAdapter = PetAdapter(activity, requireContext(), pet_id, pet_name, pet_gender, pet_age, pet_breed, pet_color)
         recyclerView.adapter = petAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            activity?.recreate()
-        }
+        // Set the list of pet names in the SharedViewModel
+        sharedViewModel.setPetNames(pet_name)
     }
 
     private fun storeDataInArrays() {
@@ -69,7 +68,7 @@ class PetsFragment : Fragment(R.layout.fragment_pets) {
                 pet_id.add(cursor.getString(0))
                 pet_name.add(cursor.getString(1))
                 pet_gender.add(cursor.getString(2))
-                pet_age.add(cursor.getString(3)+" yrs" )
+                pet_age.add(cursor.getString(3) + " yrs")
                 pet_breed.add(cursor.getString(4))
                 pet_color.add(cursor.getString(5))
             }
