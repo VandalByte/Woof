@@ -37,16 +37,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         startButton = view.findViewById(R.id.start_button)
         pauseButton = view.findViewById(R.id.pause_button)
         stopButton = view.findViewById(R.id.stop_button)
-
+        //Getting number of pets
         myDB = PetsDatabase(requireActivity())
         val petsCount = myDB.getPetsCount()
         petsCountTextView.text = "Total Pets: $petsCount"
-
+        //Getting Petnames
         sharedViewModel.petNames.observe(viewLifecycleOwner, { names ->
             val allNames = names.joinToString("\n\t ")
             petNamesTextView.text = "Pet Names:\n $allNames"
         })
-
+        //Function for Walk timer
         startButton.setOnClickListener {
             startTimer()
         }
